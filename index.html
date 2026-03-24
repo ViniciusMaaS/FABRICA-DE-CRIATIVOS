@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS — Dashboard Fábrica de Criativos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1e293b;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .button:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .button.secondary {
+            background: #475569;
+            margin-top: 10px;
+        }
+
+        .button.secondary:hover {
+            background: #334155;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #f1f5f9;
+        }
+
+        .kanban {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+
+        .kanban-column {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 400px;
+        }
+
+        .kanban-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kanban-item {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .kanban-item:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        .kanban-item.entrada { border-left: 3px solid #3b82f6; }
+        .kanban-item.analise { border-left: 3px solid #f59e0b; }
+        .kanban-item.copy { border-left: 3px solid #f97316; }
+        .kanban-item.qa { border-left: 3px solid #ef4444; }
+        .kanban-item.producao { border-left: 3px solid #a855f7; }
+        .kanban-item.aprovado { border-left: 3px solid #10b981; }
+
+        .kanban-item-id {
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .kanban-item-produto {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 20px;
+            font-size: 13px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            width: 90%;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+
+        .modal-close:hover {
+            color: #e2e8f0;
+        }
+
+        .copy-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .copy-button {
+            background: #10b981;
+            padding: 8px 16px;
+            font-size: 12px;
+            width: auto;
+            margin-top: 0;
+        }
+
+        .copy-button:hover {
+            background: #059669;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .status-entrada { background: #3b82f6; color: white; }
+        .status-analise { background: #f59e0b; color: white; }
+        .status-copy { background: #f97316; color: white; }
+        .status-qa { background: #ef4444; color: white; }
+        .status-producao { background: #a855f7; color: white; }
+        .status-aprovado { background: #10b981; color: white; }
+
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .kanban {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kanban {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        .success {
+            background: #10b98133;
+            border-left: 3px solid #10b981;
+            color: #86efac;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .info {
+            background: #3b82f633;
+            border-left: 3px solid #3b82f6;
+            color: #93c5fd;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 JARVIS — Dashboard Fábrica de Criativos</h1>
+            <p class="subtitle">TT Shop IA · Orquestração de Copy e Criativos</p>
+        </header>
+
+        <div class="layout">
+            <!-- SIDEBAR -->
+            <div class="sidebar">
+                <h2>📝 Nova Referência</h2>
+
+                <div class="form-group">
+                    <label>ID da Referência</label>
+                    <input type="text" id="refId" placeholder="REF-004" value="REF-">
+                </div>
+
+                <div class="form-group">
+                    <label>Link da Referência</label>
+                    <input type="url" id="refLink" placeholder="https://instagram.com/reel/...">
+                </div>
+
+                <div class="form-group">
+                    <label>Produto</label>
+                    <input type="text" id="refProduto" placeholder="Método TT Shop IA" value="Método TT Shop IA">
+                </div>
+
+                <div class="form-group">
+                    <label>Público-alvo</label>
+                    <input type="text" id="refPublico" placeholder="Iniciantes em TikTok Shop">
+                </div>
+
+                <div class="form-group">
+                    <label>Oferta</label>
+                    <textarea id="refOferta" placeholder="R$197 à vista ou 12x de R$49 + 7 dias de garantia"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>CTA Desejado</label>
+                    <select id="refCta">
+                        <option>Saiba Mais</option>
+                        <option>Acesse</option>
+                        <option>Compre</option>
+                        <option>Clique Aqui</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Prioridade</label>
+                    <select id="refPrioridade">
+                        <option>Alta</option>
+                        <option>Média</option>
+                        <option>Baixa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Observações</label>
+                    <textarea id="refObservacoes" placeholder="Detalhes adicionais..."></textarea>
+                </div>
+
+                <button class="button" onclick="submeterReferencia()">📤 PROCESSAR</button>
+                <button class="button secondary" onclick="limparFormulario()">🔄 Limpar</button>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div class="main">
+                <!-- KANBAN -->
+                <div class="card">
+                    <h3>📊 Kanban — Status dos Criativos</h3>
+                    <div class="kanban">
+                        <div class="kanban-column">
+                            <div class="kanban-title">🔵 Entrada</div>
+                            <div id="col-entrada"></div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-title">🟡 Análise (Atlas)</div>
+                            <div id="col-analise"></div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-title">🟠 Copy (Luca)</div>
+                            <div id="col-copy"></div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-title">🔴 QA (Quinn)</div>
+                            <div id="col-qa"></div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-title">🟣 Produção</div>
+                            <div id="col-producao"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÉTRICAS -->
+                <div class="card">
+                    <h3>📈 Métricas da Semana</h3>
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value" id="metric-total">0</div>
+                            <div class="metric-label">Criativos Processados</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="metric-aprovados">0</div>
+                            <div class="metric-label">Aprovados</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="metric-qa">0</div>
+                            <div class="metric-label">Score Médio QA</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="metric-tempo">—</div>
+                            <div class="metric-label">Tempo Médio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALHES -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="fecharModal()">&times;</span>
+            <h2 id="modal-titulo">Detalhes do Criativo</h2>
+            <div id="modal-corpo"></div>
+        </div>
+    </div>
+
+    <script>
+        // Estrutura de dados em localStorage
+        const STORAGE_KEY = 'jarvis-criativos';
+
+        function obterDados() {
+            const dados = localStorage.getItem(STORAGE_KEY);
+            return dados ? JSON.parse(dados) : {};
+        }
+
+        function salvarDados(dados) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
+            renderizarKanban();
+            atualizarMetricas();
+        }
+
+        function submeterReferencia() {
+            const refId = document.getElementById('refId').value.trim();
+            const refLink = document.getElementById('refLink').value.trim();
+            const refProduto = document.getElementById('refProduto').value.trim();
+            const refPublico = document.getElementById('refPublico').value.trim();
+            const refOferta = document.getElementById('refOferta').value.trim();
+            const refCta = document.getElementById('refCta').value;
+            const refPrioridade = document.getElementById('refPrioridade').value;
+            const refObservacoes = document.getElementById('refObservacoes').value.trim();
+
+            if (!refId || !refLink || !refProduto || !refPublico) {
+                alert('❌ Preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            const dados = obterDados();
+            const novoItem = {
+                id: refId,
+                link: refLink,
+                produto: refProduto,
+                publico: refPublico,
+                oferta: refOferta,
+                cta: refCta,
+                prioridade: refPrioridade,
+                observacoes: refObservacoes,
+                status: 'entrada',
+                dataCriacao: new Date().toLocaleString('pt-BR'),
+                copy: null,
+                score: null,
+                jobCard: null
+            };
+
+            dados[refId] = novoItem;
+            salvarDados(dados);
+            limparFormulario();
+
+            console.log('✅ Referência criada:', novoItem);
+            alert(`✅ ${refId} criada!\n\n💬 Agora copie os dados acima e mande para o Jarvis aqui no chat:\n\n"Jarvis, processar ${refId}"\n\nEle vai gerar a copy em < 5 minutos!`);
+        }
+
+        function limparFormulario() {
+            document.getElementById('refId').value = 'REF-';
+            document.getElementById('refLink').value = '';
+            document.getElementById('refProduto').value = 'Método TT Shop IA';
+            document.getElementById('refPublico').value = '';
+            document.getElementById('refOferta').value = '';
+            document.getElementById('refCta').value = 'Saiba Mais';
+            document.getElementById('refPrioridade').value = 'Alta';
+            document.getElementById('refObservacoes').value = '';
+        }
+
+        function renderizarKanban() {
+            const dados = obterDados();
+            const colunas = {
+                entrada: [],
+                analise: [],
+                copy: [],
+                qa: [],
+                producao: []
+            };
+
+            Object.values(dados).forEach(item => {
+                const status = item.status || 'entrada';
+                colunas[status].push(item);
+            });
+
+            Object.keys(colunas).forEach(coluna => {
+                const elemento = document.getElementById(`col-${coluna}`);
+                if (colunas[coluna].length === 0) {
+                    elemento.innerHTML = '<div class="empty">—</div>';
+                } else {
+                    elemento.innerHTML = colunas[coluna]
+                        .map(item => `
+                            <div class="kanban-item ${item.status}" onclick="abrirModal('${item.id}')">
+                                <div class="kanban-item-id">${item.id}</div>
+                                <div class="kanban-item-produto">${item.produto}</div>
+                                ${item.score ? `<div class="status-badge status-${item.status}">Score: ${item.score}</div>` : ''}
+                            </div>
+                        `)
+                        .join('');
+                }
+            });
+        }
+
+        function abrirModal(refId) {
+            const dados = obterDados();
+            const item = dados[refId];
+            if (!item) return;
+
+            const corpo = `
+                <div class="info">📌 Para mover para a próxima etapa, envie a copy aprovada aqui no chat.</div>
+
+                <h3>📋 Informações da Referência</h3>
+                <div class="copy-box">ID: ${item.id}
+Produto: ${item.produto}
+Público: ${item.publico}
+Oferta: ${item.oferta}
+CTA: ${item.cta}
+Prioridade: ${item.prioridade}
+Data: ${item.dataCriacao}</div>
+
+                ${item.copy ? `
+                    <h3>✍️ Copy Aprovada</h3>
+                    <div class="copy-box">${item.copy}</div>
+                    <button class="copy-button" onclick="copiarParaAreaTransferencia('${item.copy.replace(/'/g, "\\'")}')">📋 Copiar Copy</button>
+                ` : '<div class="info">⏳ Aguardando processamento...</div>'}
+
+                ${item.jobCard ? `
+                    <h3>🎬 Job Card</h3>
+                    <div class="copy-box">${item.jobCard}</div>
+                    <button class="copy-button" onclick="downloadJobCard('${item.id}')">📥 Download</button>
+                ` : ''}
+            `;
+
+            document.getElementById('modal-titulo').textContent = `${item.id} — ${item.produto}`;
+            document.getElementById('modal-corpo').innerHTML = corpo;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function atualizarMetricas() {
+            const dados = obterDados();
+            const items = Object.values(dados);
+            const aprovados = items.filter(i => i.status === 'producao').length;
+            const comScore = items.filter(i => i.score);
+
+            document.getElementById('metric-total').textContent = items.length;
+            document.getElementById('metric-aprovados').textContent = aprovados;
+            document.getElementById('metric-qa').textContent = comScore.length > 0
+                ? Math.round(comScore.reduce((a, i) => a + i.score, 0) / comScore.length)
+                : '—';
+        }
+
+        function copiarParaAreaTransferencia(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('✅ Copy copiada para a área de transferência!');
+            });
+        }
+
+        function downloadJobCard(refId) {
+            const dados = obterDados();
+            const item = dados[refId];
+            if (!item || !item.jobCard) return;
+
+            const elemento = document.createElement('a');
+            elemento.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(item.jobCard);
+            elemento.download = `JC-${refId}.txt`;
+            elemento.click();
+        }
+
+        // Adicionar alguns dados de exemplo
+        function carregarExemplo() {
+            const dados = obterDados();
+            if (Object.keys(dados).length === 0) {
+                dados['REF-003'] = {
+                    id: 'REF-003',
+                    link: 'https://instagram.com/reel/DWKOq4NEc6X',
+                    produto: 'Método TT Shop IA',
+                    publico: 'Iniciantes em TikTok Shop',
+                    oferta: 'R$197 à vista ou 12x de R$49 + 7 dias',
+                    cta: 'Saiba Mais',
+                    prioridade: 'Alta',
+                    observacoes: 'Referência Jéssica Freire',
+                    status: 'copy',
+                    dataCriacao: new Date().toLocaleString('pt-BR'),
+                    copy: 'GANCHO: "Seu concorrente já tem. Você tá esperando o quê?"\n\nCORPO: A IA não dorme. Trabalha 24/7 gerando vídeos e monetizando.\n\nPROBLEMA: Conteúdo caro, leva tempo, trava produção\n\nSOLUÇÃO: Cria sua própria influenciadora em 30 dias\n\nURGÊNCIA: +20 mil alunos, turma fechando, 17 vagas\n\nCTA: Toque em Saiba Mais agora mesmo',
+                    score: 91,
+                    jobCard: 'JOB CARD #JC-003\n\nProduto: Método TT Shop IA\nInfluencer: Jéssica Freire (IA)\nFormato: Reels\nPrazo: 23/03 — 23:15\n\n[Instruções completas...]'
+                };
+                salvarDados(dados);
+            }
+        }
+
+        // Inicializar
+        window.addEventListener('load', () => {
+            carregarExemplo();
+            renderizarKanban();
+            atualizarMetricas();
+        });
+
+        // Fechar modal ao clicar fora
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') fecharModal();
+        });
+    </script>
+</body>
+</html>
